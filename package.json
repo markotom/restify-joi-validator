@@ -1,0 +1,35 @@
+{
+  "name": "restify-joi",
+  "version": "0.0.1",
+  "description": "Restify validation using Joi",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markotom/restify-joi.git"
+  },
+  "keywords": [
+    "restify",
+    "joi",
+    "validation",
+    "schema",
+    "middleware"
+  ],
+  "author": "Marco Godínez <markotom@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/markotom/restify-joi/issues"
+  },
+  "homepage": "https://github.com/markotom/restify-joi#readme",
+  "devDependencies": {
+    "joi": "^6.4.3",
+    "mocha": "^2.2.5",
+    "restify": "^3.0.3",
+    "sinon": "^1.15.3"
+  },
+  "dependencies": {
+    "joi": "^6.4.3"
+  }
+}
