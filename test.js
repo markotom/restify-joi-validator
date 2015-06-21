@@ -1,3 +1,5 @@
+'use strict';
+
 var assert = require('assert');
 var validator = require('./index');
 var sinon = require('sinon');
@@ -8,7 +10,7 @@ describe('Middleware', function () {
     this.next = sinon.spy();
     this.res = { send: sinon.spy() };
     this.req = { route: { url: '/foo' } };
-    this.schemas = {
+    this.req.route.validations = {
       params: {
         param1: joi.string().required(),
         param2: joi.string().uri(),
@@ -20,7 +22,7 @@ describe('Middleware', function () {
         param2: joi.string().email().required(),
         param3: joi.number().required()
       }
-    }
+    };
   });
 
   it('should be a function', function () {
@@ -37,11 +39,8 @@ describe('Middleware', function () {
   });
 
   it('should return errors when attempting send wrong parameters', function () {
-    // Set schema
-    this.req.route.validations = { params: this.schemas.params };
-    // Set params
     this.req.params = {
-      // param1: jane@doe.com, << required parameter missing...
+      // param1: 'jane@doe.com', << required parameter missing...
       param2: 'this is not a valid uri',
       param3: 'this is not a valid email',
       param4: 'this is not valid value',
@@ -57,5 +56,20 @@ describe('Middleware', function () {
     assert.equal(typeof this.res.send.args[0][1].status, 'string');
     assert(this.res.send.args[0][1].errors);
     assert.equal(typeof this.res.send.args[0][1].errors, 'object');
+  });
+
+  it('should pass the params validations', function () {
+    this.req.params = {
+      param1: 'Required parameter',
+      param2: 'http://www.google.com',
+      param3: 'jane@doe.com',
+      param4: 2
+    };
+
+    validator()(this.req, this.res, this.next);
+
+    assert(this.res.send.notCalled);
+    assert(this.res.send.neverCalledWith(400));
+    assert(this.next.calledOnce);
   });
 });
