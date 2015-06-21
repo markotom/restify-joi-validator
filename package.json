@@ -1,5 +1,5 @@
 {
-  "name": "restify-joi",
+  "name": "restify-joi-validator",
   "version": "0.0.1",
   "description": "Restify validation using Joi",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/markotom/restify-joi.git"
+    "url": "git+https://github.com/markotom/restify-joi-validator.git"
   },
   "keywords": [
     "restify",
@@ -20,9 +20,9 @@
   "author": "Marco Godínez <markotom@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/markotom/restify-joi/issues"
+    "url": "https://github.com/markotom/restify-joi-validator/issues"
   },
-  "homepage": "https://github.com/markotom/restify-joi#readme",
+  "homepage": "https://github.com/markotom/restify-joi-validator#readme",
   "devDependencies": {
     "joi": "^6.4.3",
     "mocha": "^2.2.5",
