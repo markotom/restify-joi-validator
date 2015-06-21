@@ -15,12 +15,14 @@ describe('Middleware', function () {
         param1: joi.string().required(),
         param2: joi.string().uri(),
         param3: joi.string().email(),
-        param4: joi.number().valid([1,2,3])
+        param4: joi.number().valid([1,2,3]),
+        param5: joi.string().default('Default value')
       },
       body: {
         param1: joi.string().valid(['foo', 'bar', 'meh']),
         param2: joi.string().email().required(),
-        param3: joi.number().required()
+        param3: joi.number().required(),
+        param4: joi.string().default('Default value')
       }
     };
   });
@@ -45,6 +47,7 @@ describe('Middleware', function () {
       param2: 'this is not a valid uri',
       param3: 'this is not a valid email',
       param4: 'this is not valid value',
+      param5: 'Another value',
       wrongParam: 'there is no parameter in the schema named as `wrongParam`'
     };
 
@@ -73,6 +76,7 @@ describe('Middleware', function () {
     assert(this.res.send.notCalled);
     assert(this.res.send.neverCalledWith(400));
     assert(this.next.calledOnce);
+    assert.equal(this.req.params.param5, 'Default value');
   });
 
   it('should return errors when attempting send wrong body params', function () {
@@ -81,6 +85,7 @@ describe('Middleware', function () {
       param1: 'invalid',
       // param2: 'john@doe.com', // << required param missing
       // param3: 100, // << required param missing
+      param4: 'Another value',
       wrongParam: 'there is no parameter in the schema named as `wrongParam`'
     };
 
@@ -108,5 +113,6 @@ describe('Middleware', function () {
     assert(this.res.send.notCalled);
     assert(this.res.send.neverCalledWith(400));
     assert(this.next.calledOnce);
+    assert.equal(this.req.body.param4, 'Default value');
   });
 });

@@ -9,6 +9,8 @@ module.exports = function () {
         if (err) {
           return res.send(400, { status: err.name, errors: err.details });
         }
+
+        req.params = params;
       });
     }
 
@@ -17,6 +19,8 @@ module.exports = function () {
         if (err) {
           return res.send(400, { status: err.name, errors: err.details });
         }
+
+        req.body = params;
       });
     }
 
