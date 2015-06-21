@@ -10,14 +10,14 @@ describe('Middleware', function () {
     this.next = sinon.spy();
     this.res = { send: sinon.spy() };
     this.req = { route: { url: '/foo' } };
-    this.req.route.validations = {
+    this.schemas = {
       params: {
         param1: joi.string().required(),
         param2: joi.string().uri(),
         param3: joi.string().email(),
         param4: joi.number().valid([1,2,3])
       },
-      queries: {
+      body: {
         param1: joi.string().valid(['foo', 'bar', 'meh']),
         param2: joi.string().email().required(),
         param3: joi.number().required()
@@ -38,7 +38,8 @@ describe('Middleware', function () {
     assert(this.next.calledOnce);
   });
 
-  it('should return errors when attempting send wrong parameters', function () {
+  it('should return errors when attempting send wrong query params', function () {
+    this.req.route.validations = { params: this.schemas.params };
     this.req.params = {
       // param1: 'jane@doe.com', << required parameter missing...
       param2: 'this is not a valid uri',
@@ -58,12 +59,48 @@ describe('Middleware', function () {
     assert.equal(typeof this.res.send.args[0][1].errors, 'object');
   });
 
-  it('should pass the params validations', function () {
+  it('should pass the query parameter validations', function () {
+    this.req.route.validations = { params: this.schemas.params };
     this.req.params = {
       param1: 'Required parameter',
       param2: 'http://www.google.com',
       param3: 'jane@doe.com',
       param4: 2
+    };
+
+    validator()(this.req, this.res, this.next);
+
+    assert(this.res.send.notCalled);
+    assert(this.res.send.neverCalledWith(400));
+    assert(this.next.calledOnce);
+  });
+
+  it('should return errors when attempting send wrong body params', function () {
+    this.req.route.validations = { body: this.schemas.body };
+    this.req.body = {
+      param1: 'invalid',
+      // param2: 'john@doe.com', // << required param missing
+      // param3: 100, // << required param missing
+      wrongParam: 'there is no parameter in the schema named as `wrongParam`'
+    };
+
+    validator()(this.req, this.res, this.next);
+
+    assert(this.res.send.calledOnce);
+    assert(this.res.send.calledWith(400));
+    assert(this.res.send.args[0][1]);
+    assert.equal(typeof this.res.send.args[0][1], 'object');
+    assert.equal(typeof this.res.send.args[0][1].status, 'string');
+    assert(this.res.send.args[0][1].errors);
+    assert.equal(typeof this.res.send.args[0][1].errors, 'object');
+  });
+
+  it('should pass the body parameter validations', function () {
+    this.req.route.validations = { body: this.schemas.body };
+    this.req.body = {
+      param1: 'meh',
+      param2: 'john@doe.com',
+      param3: 100
     };
 
     validator()(this.req, this.res, this.next);
