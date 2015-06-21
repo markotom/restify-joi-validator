@@ -5,6 +5,44 @@ Restify Joi Validator
 [![Build Status](https://travis-ci.org/markotom/restify-joi-validator.svg?branch=master)](https://travis-ci.org/markotom/restify-joi-validator)
 [![npm version](https://badge.fury.io/js/restify-joi-validator.svg)](http://badge.fury.io/js/restify-joi-validator)
 
+#  Install
+
+```js
+$ npm install restify-joi-validator --save
+```
+
+# Usage
+
+```js
+var restify = require('restify');
+var joi = require('joi');
+var validator = require('restify-joi-validator');
+var server = restify.createServer();
+
+// Add restify validator
+server.use(validator());
+```
+
+# Example
+
+```js
+server.get({
+  path: '/article/:id',
+  validations: {
+    params: {
+      id: joi.string().regex(/^[0-9a-fA-F]{24}$/)
+    },
+    body: {
+      param1: joi.string().required(),
+      param2: joi.string().email(),
+      param3: joi.string().uri()
+    }
+  }
+}, function (req, res, next) {
+  console.log(req.body, req.params);
+});
+```
+
 ## License
 
 The MIT License (MIT)
