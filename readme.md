@@ -19,6 +19,7 @@ var joi = require('joi');
 var validator = require('restify-joi-validator');
 var server = restify.createServer();
 
+server.use(restify.bodyParser());
 // Add restify validator
 server.use(validator());
 ```
@@ -40,6 +41,7 @@ server.get({
   }
 }, function (req, res, next) {
   console.log(req.body, req.params);
+  res.send(200);
 });
 ```
 
