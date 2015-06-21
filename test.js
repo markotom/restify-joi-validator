@@ -23,6 +23,11 @@ describe('Middleware', function () {
         param2: joi.string().email().required(),
         param3: joi.number().required(),
         param4: joi.string().default('Default value')
+      },
+      query: {
+        param1: joi.number().required(),
+        param2: joi.any().required(),
+        param3: joi.string().default('Default value')
       }
     };
   });
@@ -40,7 +45,7 @@ describe('Middleware', function () {
     assert(this.next.calledOnce);
   });
 
-  it('should return errors when attempting send wrong query params', function () {
+  it('should return errors when attempting send wrong params', function () {
     this.req.route.validations = { params: this.schemas.params };
     this.req.params = {
       // param1: 'jane@doe.com', << required parameter missing...
@@ -62,7 +67,7 @@ describe('Middleware', function () {
     assert.equal(typeof this.res.send.args[0][1].errors, 'object');
   });
 
-  it('should pass the query parameter validations', function () {
+  it('should pass the parameter validations', function () {
     this.req.route.validations = { params: this.schemas.params };
     this.req.params = {
       param1: 'Required parameter',
@@ -114,5 +119,39 @@ describe('Middleware', function () {
     assert(this.res.send.neverCalledWith(400));
     assert(this.next.calledOnce);
     assert.equal(this.req.body.param4, 'Default value');
+  });
+
+  it('should return errors when attempting send wrong query params', function () {
+    this.req.route.validations = { query: this.schemas.query };
+    this.req.query = {
+      param1: 'invalid',
+      // param2: 'any value', // << required param missing
+      wrongParam: 'there is no parameter in the schema named as `wrongParam`'
+    };
+
+    validator()(this.req, this.res, this.next);
+
+    assert(this.res.send.calledOnce);
+    assert(this.res.send.calledWith(400));
+    assert(this.res.send.args[0][1]);
+    assert.equal(typeof this.res.send.args[0][1], 'object');
+    assert.equal(typeof this.res.send.args[0][1].status, 'string');
+    assert(this.res.send.args[0][1].errors);
+    assert.equal(typeof this.res.send.args[0][1].errors, 'object');
+  });
+
+  it('should pass the query parameter validations', function () {
+    this.req.route.validations = { query: this.schemas.query };
+    this.req.query = {
+      param1: 12345,
+      param2: 'any value'
+    };
+
+    validator()(this.req, this.res, this.next);
+
+    assert(this.res.send.notCalled);
+    assert(this.res.send.neverCalledWith(400));
+    assert(this.next.calledOnce);
+    assert.equal(this.req.query.param3, 'Default value');
   });
 });
