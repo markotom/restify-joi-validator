@@ -5,43 +5,42 @@ var joi = require('joi');
 module.exports = function () {
   return function (req, res, next) {
     if (req.route.validations) {
+      var validation;
+
+      // Validate req.params
       if (req.route.validations.params) {
-        joi.validate(req.params || {}, req.route.validations.params, function (err, params) {
-          if (err) {
-            return res.send(400, { status: err.name, errors: err.details });
-          }
+        validation = joi.validate(req.params || {}, req.route.validations.params);
 
-          req.params = params;
-          next();
-        });
+        if (validation.error) {
+          return res.send(400, { status: validation.error.name, errors: validation.error.details });
+        }
 
-        return;
+        // Set defaults
+        req.params = validation.value;
       }
 
+      // Validate req.body
       if (req.route.validations.body) {
-        joi.validate(req.body || {}, req.route.validations.body, function (err, body) {
-          if (err) {
-            return res.send(400, { status: err.name, errors: err.details });
-          }
+        validation = joi.validate(req.body || {}, req.route.validations.body);
 
-          req.body = body;
-          next();
-        });
+        if (validation.error) {
+          return res.send(400, { status: validation.error.name, errors: validation.error.details });
+        }
 
-        return;
+        // Set defaults
+        req.body = validation.value;
       }
 
-      if (req.route.validations && req.route.validations.query) {
-        joi.validate(req.query || {}, req.route.validations.query, function (err, query) {
-          if (err) {
-            return res.send(400, { status: err.name, errors: err.details });
-          }
+      // Validate req.query
+      if (req.route.validations.query) {
+        validation = joi.validate(req.query || {}, req.route.validations.query);
 
-          req.query = query;
-          next();
-        });
+        if (validation.error) {
+          return res.send(400, { status: validation.error.name, errors: validation.error.details });
+        }
 
-        return;
+        // Set defaults
+        req.query = validation.value;
       }
     }
 
