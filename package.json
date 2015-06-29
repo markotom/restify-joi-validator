@@ -1,6 +1,6 @@
 {
   "name": "restify-joi-validator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Restify validation using Joi",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,10 @@
     "joi",
     "validation",
     "schema",
-    "middleware"
+    "middleware",
+    "restful",
+    "rest",
+    "api"
   ],
   "author": "Marco Godínez <markotom@gmail.com>",
   "license": "MIT",
