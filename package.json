@@ -1,6 +1,6 @@
 {
   "name": "restify-joi-validator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Restify validation using Joi",
   "main": "index.js",
   "scripts": {
@@ -32,6 +32,6 @@
     "sinon": "^1.15.3"
   },
   "dependencies": {
-    "joi": "^6.4.3"
+    "joi": "^6.5.0"
   }
 }
